@@ -130,8 +130,8 @@ class LetsEncrypt
         Cache::forget($challengeCacheKey);
 
         return [
-            'sslPrivateKey' => $this->domainPrivateKeyPath,
-            'sslCertificate' => $this->domainCertificatePath,
+            'sslPrivateKey' => $this->domainPrivateKeyPathCurrent,
+            'sslCertificate' => $this->domainCertificatePathCurrent,
         ];
     }
 
