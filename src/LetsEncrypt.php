@@ -27,6 +27,8 @@ class LetsEncrypt
     private string $userPrivateKeyPath;
     private string $domainPrivateKeyPath;
     private string $domainCertificatePath;
+    private string $domainPrivateKeyPathCurrent;
+    private string $domainCertificatePathCurrent;
     private KeyPair $keyPair;
     private AcmeClient $acmeClient;
     private DnsDataExtractor $dnsDataExtractor;
@@ -120,8 +122,10 @@ class LetsEncrypt
         $certificateResponse = $this->acmeClient->requestCertificate($domain, $csr);
 
         file_put_contents($this->domainCertificatePath, $certificateResponse->getCertificate()->getPEM());
-        file_put_contents($this->domainCertificatePath, "\n\n", FILE_APPEND);
         file_put_contents($this->domainCertificatePath, $certificateResponse->getCertificate()->getIssuerCertificate()->getPEM(), FILE_APPEND);
+
+        file_put_contents($this->domainPrivateKeyPathCurrent, file_get_contents($this->domainPrivateKeyPath));
+        file_put_contents($this->domainCertificatePathCurrent, file_get_contents($this->domainCertificatePath));
 
         Cache::forget($challengeCacheKey);
 
@@ -206,10 +210,24 @@ class LetsEncrypt
             mkdir(storage_path("cert/certificate/$domain"));
         }
 
+        if (!file_exists(storage_path('cert/current'))) {
+            mkdir(storage_path('cert/current'));
+        }
+
+        if (!file_exists(storage_path("cert/current/$domain"))) {
+            mkdir(storage_path("cert/current/$domain"));
+        }
+
         $time = Carbon::now()->timestamp;
 
         $this->domainPrivateKeyPath = storage_path("cert/certificate/$domain/{$time}_$domain.key");
         $this->domainCertificatePath = storage_path("cert/certificate/$domain/{$time}_$domain.pem");
+
+        $this->domainPrivateKeyPathCurrent = storage_path("cert/current/$domain/private.key");
+        $this->domainCertificatePathCurrent = storage_path("cert/current/$domain/fullchain.pem");
+
+        $domainVersionPathCurrent = storage_path("cert/current/$domain/version");
+        file_put_contents($domainVersionPathCurrent, $time);
     }
 
 }
