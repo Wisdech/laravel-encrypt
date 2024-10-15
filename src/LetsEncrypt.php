@@ -27,7 +27,6 @@ class LetsEncrypt
     private string $userPrivateKeyPath;
     private string $domainPrivateKeyPath;
     private string $domainCertificatePath;
-    private string $issuerCertificatePath;
     private KeyPair $keyPair;
     private AcmeClient $acmeClient;
     private DnsDataExtractor $dnsDataExtractor;
@@ -211,7 +210,6 @@ class LetsEncrypt
 
         $this->domainPrivateKeyPath = storage_path("cert/certificate/$domain/{$time}_$domain.key");
         $this->domainCertificatePath = storage_path("cert/certificate/$domain/{$time}_$domain.pem");
-        $this->issuerCertificatePath = storage_path("cert/certificate/$domain/{$time}_lets_encrypt.pem");
     }
 
 }
