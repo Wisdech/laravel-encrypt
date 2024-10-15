@@ -121,14 +121,14 @@ class LetsEncrypt
         $certificateResponse = $this->acmeClient->requestCertificate($domain, $csr);
 
         file_put_contents($this->domainCertificatePath, $certificateResponse->getCertificate()->getPEM());
-        file_put_contents($this->issuerCertificatePath, $certificateResponse->getCertificate()->getIssuerCertificate()->getPEM());
+        file_put_contents($this->domainCertificatePath, "\n\n", FILE_APPEND);
+        file_put_contents($this->domainCertificatePath, $certificateResponse->getCertificate()->getIssuerCertificate()->getPEM(), FILE_APPEND);
 
         Cache::forget($challengeCacheKey);
 
         return [
             'sslPrivateKey' => $this->domainPrivateKeyPath,
             'sslCertificate' => $this->domainCertificatePath,
-            'sslIssuerCertificate' => $this->issuerCertificatePath,
         ];
     }
 

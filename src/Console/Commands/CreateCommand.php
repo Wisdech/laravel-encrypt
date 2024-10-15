@@ -54,7 +54,6 @@ class CreateCommand extends Command
             $this->info('证书生成成功');
             $this->info('私钥位置：' . $result['sslPrivateKey']);
             $this->info('证书位置：' . $result['sslCertificate']);
-            $this->info('发行者证书位置：' . $result['sslIssuerCertificate']);
         }
 
         if (is_bool($result)) {
